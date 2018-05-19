@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+
+<head id="Head1" runat="server">
+    <meta name="viewport" content="width=device-width" />
+    <title>Responsive ASP.NET App</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <link href="../../css/metro-bootstrap.css" rel="stylesheet" />
+    <link href="../../css/m-buttons.css" rel="stylesheet" />
+    <script src="../../js/metro.min.js"></script>
+    <style type="text/css">
+        ol {
+            list-style-type: none;
+            counter-reset: item;
+            margin: 0;
+            padding: 0;
+        }
+
+            ol > li {
+                display: table;
+                counter-increment: item;
+                margin-bottom: 0.6em;
+            }
+
+                ol > li > ol > li {
+                    margin-left: -3.0em;
+                }
+
+                ol > li:before {
+                    content: counters(item, ".") ". ";
+                    display: table-cell;
+                    padding-right: 0.6em;
+                }
+
+        li ol > li {
+            margin: 0;
+        }
+
+            li ol > li:before {
+                content: counters(item, ":") " ";
+            }
+    </style>
+</head>
+<body class="metro">
+    @RenderBody()
+</body>

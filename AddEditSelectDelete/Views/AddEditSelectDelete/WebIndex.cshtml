@@ -1,0 +1,176 @@
+﻿@{
+    Layout = "~/Views/Shared/_AddEditSelectDelete.cshtml";
+}
+
+
+<script type="text/javascript">
+    var counter = 0;
+    var windowsize;
+    var webindex = '/AddEditSelectDelete/WebIndex';
+    var index = '/AddEditSelectDelete/Index';
+
+
+            $(document).ready(function () {
+                if (counter == 0) {
+                    windowsize = $(window).width();
+                    if (windowsize < 440) {
+                        window.location = index;
+                    }
+                
+                }
+                counter++;
+
+            });
+
+            $(window).resize(function () {
+
+                windowsize = $(window).width();
+                if (windowsize > 440) {
+                    window.location = webindex;
+                }
+                else
+                {
+                    window.location = index;
+                }
+            });
+
+</script>
+
+
+  @{ 
+
+      string connectionString = "Data Source=(localdb)\\LocalInstance;Initial Catalog=AdventureWorks2012;Integrated Security=True";
+      string query = "SELECT TOP 1000 [DepartmentID],[Name],[GroupName],[ModifiedDate]FROM [AdventureWorks2012].[HumanResources].[Department]";
+      System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectionString);
+      System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(query, conn);
+      System.Data.DataTable dtHR = new System.Data.DataTable();
+      conn.Open();
+      System.Data.SqlClient.SqlDataAdapter da = new System.Data.SqlClient.SqlDataAdapter(cmd);
+      da.Fill(dtHR);
+      conn.Close();
+      da.Dispose();
+  }
+<form action="/AddEditSelectDelete/Index" method="post" name="frmSubmit">
+    <h2>@Html.ActionLink("About", "About", "AddEditSelectDelete", null, null)</h2>
+    <h3>Human Resources</h3>
+
+    <table class="table  striped">
+        <thead>
+            <tr>
+                <th class="text-left info"> <h2 id="__table__">DepartmentID</h2></th>
+                <th class="text-left"><h2 id="__form__">Name</h2></th>
+                <th class="text-left"><h2 id="__buttons__">GroupName</h2></th>
+                <th class="text-left"><h2 id="__image__">ModifiedDate</h2></th>
+                <th class="text-left"><h2 id="__tile__">OPTIONS</h2></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (ViewData["AddRecord"] != null && ViewData["AddRecord"].ToString() == "AddRecord")
+            {
+                for (int i = 0; i < dtHR.Rows.Count; i++)
+                {
+                    <tr class="">
+                        <td>@dtHR.Rows[i]["DepartmentID"].ToString()</td>
+                        <td class="right">@dtHR.Rows[i]["Name"].ToString()</td>
+                        <td class="right">@dtHR.Rows[i]["GroupName"].ToString()</td>
+                        <td class="right">@dtHR.Rows[i]["ModifiedDate"].ToString()</td>
+                        <td class="right">
+                            @Html.ActionLink("Edit", "Edit", "AddEditSelectDelete", new { id = dtHR.Rows[i]["DepartmentID"].ToString(), name = dtHR.Rows[i]["Name"].ToString(), groupName = dtHR.Rows[i]["GroupName"].ToString(), modifiedDate = dtHR.Rows[i]["ModifiedDate"].ToString() }, null)
+
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td></td>
+                    <td>@Html.TextBox("NAMETOADD")</td>
+                    <td>@Html.TextBox("GROUPNAMETOADD")</td>
+                    <td>
+                        <div class="input-control text" data-role="datepicker" data-effect="none" data-format='yyyy-mm-dd'>
+                            @Html.TextBox("MODIFIEDDATETOADD")
+                        </div>
+                    </td>
+                    <td>
+                        @Html.Hidden("viewtoretupd", "webindex")
+                        <input id="Submit1" type="submit" runat="server" value="Add New" class="m-btn blue fg-white">
+                        @Html.ActionLink("Cancel", "Cancel", "AddEditSelectDelete", null, null)
+                    </td>
+                </tr>
+            }
+            else
+            {
+                if (ViewData["id"] == null && ViewData["name"] == null && ViewData["groupName"] == null && ViewData["modifiedDate"] == null)
+                {
+                    for (int i = 0; i < dtHR.Rows.Count; i++)
+                    {
+                        <tr class="">
+                            <td>@dtHR.Rows[i]["DepartmentID"].ToString()</td>
+                            <td class="right">@dtHR.Rows[i]["Name"].ToString()</td>
+                            <td class="right">@dtHR.Rows[i]["GroupName"].ToString()</td>
+                            <td class="right">@dtHR.Rows[i]["ModifiedDate"].ToString()</td>
+                            <td class="right">
+                                @Html.ActionLink("Edit", "Edit", "AddEditSelectDelete", new { id = dtHR.Rows[i]["DepartmentID"].ToString(), name = dtHR.Rows[i]["Name"].ToString(), groupName = dtHR.Rows[i]["GroupName"].ToString(), modifiedDate = dtHR.Rows[i]["ModifiedDate"].ToString(), viewtoreturn = "webindex" }, null)
+                                @*<input type="submit" name="submitButton" value="Delete" class="m-btn purple fg-white" />*@
+                                @Html.ActionLink("Delete", "Delete", "AddEditSelectDelete", new { idtodel = dtHR.Rows[i]["DepartmentID"].ToString(), viewtoreturn = "webindex" }, null)
+                            </td>
+                        </tr>
+
+                    }
+
+                    <tr class="info">
+                        <td></td>
+                        <td class="right"></td>
+                        <td class="right"></td>
+                        <td class="right"></td>
+                        <td class="right">
+                            @Html.ActionLink("Add", "Add", "AddEditSelectDelete", new { viewtoretur = "webindex" }, null)
+                        </td>
+                    </tr>
+
+                }
+                else
+                {
+                    for (int j = 0; j < dtHR.Rows.Count; j++)
+                    {
+                        int idtoedit = Convert.ToInt32(ViewData["id"].ToString());
+
+                        if (dtHR.Rows[j]["DepartmentID"].ToString() == ViewData["id"].ToString())
+                        {
+
+                            <tr>
+                                <td>@dtHR.Rows[j]["DepartmentID"].ToString()@Html.Hidden("deptID", dtHR.Rows[j]["DepartmentID"].ToString())</td>
+                                <td>@Html.TextBox("nme", dtHR.Rows[j]["Name"].ToString())</td>
+                                <td>@Html.TextBox("grnme", dtHR.Rows[j]["GroupName"].ToString())</td>
+                                <td>@Html.TextBox("mddate", dtHR.Rows[j]["ModifiedDate"].ToString())</td>
+                                <td>
+                                    @Html.Hidden("viewtoretupd", "webindex")
+                                    <input id="Submit2" type="submit" value="UPDATE" class="m-btn blue fg-white">
+                                    @Html.ActionLink("Cancel", "Cancel", "AddEditSelectDelete", new { vtupd = "webindex" }, null)
+                                </td>
+                            </tr>
+
+                        }
+                        else
+                        {
+
+                            <tr class="">
+                                <td>@dtHR.Rows[j]["DepartmentID"].ToString()</td>
+                                <td>@dtHR.Rows[j]["Name"].ToString()</td>
+                                <td>@dtHR.Rows[j]["GroupName"].ToString()</td>
+                                <td>@dtHR.Rows[j]["ModifiedDate"].ToString()</td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", "AddEditSelectDelete", new { id = dtHR.Rows[j]["DepartmentID"].ToString(), name = dtHR.Rows[j]["Name"].ToString(), groupName = dtHR.Rows[j]["GroupName"].ToString(), modifiedDate = dtHR.Rows[j]["ModifiedDate"].ToString() }, null)
+                                    @Html.ActionLink("Delete", "Delete", "AddEditSelectDelete", new { idtodel = dtHR.Rows[j]["DepartmentID"].ToString() }, null)
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+            }
+
+
+
+        </tbody>
+    </table>
+
+    </form>

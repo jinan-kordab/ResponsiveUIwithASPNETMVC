@@ -1,0 +1,557 @@
+﻿@model AddEditSelectDelete.Models.AddEditSelectDelete
+@{
+    Layout = "~/Views/Shared/_AddEditSelectDelete.cshtml";
+}
+
+<script type="text/javascript">
+    var counter = 0;
+    var windowsize;
+    var webindex = '/AddEditSelectDelete/WebIndex';
+    var index = '/AddEditSelectDelete/Index';
+
+            $(document).ready(function () {
+                if (counter == 0) {
+                    windowsize = $(window).width();
+                    if (windowsize > 440) {
+                        window.location = webindex;
+                    }
+                }
+                counter++;
+            });
+
+            $(window).resize(function () {
+                windowsize = $(window).width();
+                if (windowsize > 440) {
+                    window.location = webindex;
+                }
+                else
+                {
+                    window.location = index;
+                }
+            });
+
+</script>
+
+    
+
+    @{
+        string connectionString = "Data Source=(localdb)\\LocalInstance;Initial Catalog=AdventureWorks2012;Integrated Security=True";
+        string query = "SELECT TOP 1000 [DepartmentID],[Name],[GroupName],[ModifiedDate]FROM [AdventureWorks2012].[HumanResources].[Department]";
+        System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectionString);
+        System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(query, conn);
+        System.Data.DataTable dtHR = new System.Data.DataTable();
+        conn.Open();
+        System.Data.SqlClient.SqlDataAdapter da = new System.Data.SqlClient.SqlDataAdapter(cmd);
+        da.Fill(dtHR);
+        conn.Close();
+        da.Dispose();
+    }
+
+
+    <form action="/AddEditSelectDelete/Index" method="post" name="frmSubmit" >
+
+    <h2>@Html.ActionLink("About", "About", "AddEditSelectDelete", null, null)</h2>
+        
+
+
+    @if (ViewData["rowdeletednotify"] != null)
+    {
+
+
+        <nav class="sidebar dark">
+            <ul>
+                <li class="active"><a href="#">Row Deleted !</a></li>
+            </ul>
+        </nav>
+    }
+
+
+    <nav class="sidebar light">
+        <div class="navigation-bar-content collapse">
+            <h3>
+                <a href="/" class="element">Human Resources</a>
+            </h3>
+            <span class="element-divider"></span>
+
+            <a class="pull-menu" href="#"></a>
+
+
+
+
+            @if (ViewData["AddRecord"] != null && ViewData["AddRecord"].ToString() == "AddRecord")
+        {
+
+
+        <ol class="element-menu bg-grayLighter fg-indigo text-shadow" style="">
+
+            @for (int i = 0; i < dtHR.Rows.Count; i++)
+            {
+
+
+
+
+            <li>
+                <a class="dropdown-toggle bg-grayLighter" href="#">@dtHR.Rows[i]["Name"].ToString()</a>
+                <ul class="dropdown-menu " data-role="dropdown">
+                    <li>
+                        <table class="table  bordered hovered">
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-grayLighter" style="width: 50%"><b>Department ID:</b></td>
+                                    <td  style="width: 50%">@dtHR.Rows[i]["DepartmentID"].ToString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+
+                    <li>
+                        <table class="table  bordered hovered">
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-grayLighter" style="width: 50%"><b>Name:</b></td>
+                                    <td style="width: 50%">@dtHR.Rows[i]["Name"].ToString() %></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table class="table  bordered hovered">
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-grayLighter" style="width: 50%"><b>Group Name:</b></td>
+                                    <td style="width: 50%"> @dtHR.Rows[i]["GroupName"].ToString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+
+                    <li>
+                        <table class="table  bordered hovered">
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-grayLighter" style="width: 50%"><b>Modification Date:</b></td>
+                                    <td style="width: 50%"> @dtHR.Rows[i]["ModifiedDate"].ToString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </li>
+
+
+                    <li>
+
+
+
+                        <div class="grid">
+                            <div class="row">
+                                <div class="col-sm-6 text-center">
+                                   @Html.ActionLink("Edit", "Edit", "AddEditSelectDelete", new { id = dtHR.Rows[i]["DepartmentID"].ToString(), name = dtHR.Rows[i]["Name"].ToString(), groupName = dtHR.Rows[i]["GroupName"].ToString(), modifiedDate = dtHR.Rows[i]["ModifiedDate"].ToString() }, null)
+
+                                </div>
+                                <div class="col-sm-6 text-center">
+                                 
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </li>
+
+                </ul>
+            </li>
+
+
+            }
+        </ol>
+        <ol class="element-menu bg-violet fg-white text-shadow" style="">
+            <li class="bg-darkCyan fg-white " style="padding-right:15px;">
+                <a class="dropdown-toggle bg-darkCyan fg-white"  href="#">Add New</a>
+                <ol style="width:320px" class="bg-darkCyan fg-white ">
+                    
+                    <li style="width:100%;">
+
+                        <table class="table  bordered hovered">
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-lightBlue fg-white text-shadow" style="width: 50%"><b>Name:</b></td>
+                                    <td style="width: 50%">@Html.TextBox("NAMETOADD")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+
+                    </li>
+
+                    <li style="width:100%">
+
+                        <table class="table  bordered hovered">
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-lightBlue fg-white text-shadow" style="width: 50%"><b>Group:</b></td>
+                                    <td style="width: 50%">@Html.TextBox("GROUPNAMETOADD")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+
+                    </li>
+                    <li style="width:100%">
+
+                        <table class="table  bordered hovered">
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-lightBlue fg-white text-shadow"  style="width: 50%"><b>Date:</b></td>
+                                    <td style="width: 50%">
+                                        @Html.TextBox("MODIFIEDDATETOADD", DateTime.Now.ToShortDateString())
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+                    </li>
+                    <li style="width:100%">
+           
+                        <div class="grid">
+                            <div class="row">
+                                <div class="col-sm-6 text-center">
+                                    <input id="Submit1" type="submit" name="addnew" value="Add New" class="m-btn blue fg-white" style = "width:50%;height:30px;border:none">
+
+                                </div>
+                                <div class="col-sm-6 text-center">
+                                   @Html.ActionLink("Cancel", "Cancel", "AddEditSelectDelete", null, new { @class = "m-btn blue fg-white", @style = "width:50%;height:30px;" })
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </li>
+
+                </ol>
+            </li>
+        </ol>
+
+        }
+        else
+        {
+
+        if (ViewData["id"] == null && ViewData["name"] == null && ViewData["groupName"] == null && ViewData["modifiedDate"] == null)
+        {
+
+
+        <ol class="element-menu bg-grayLighter fg-indigo text-shadow">
+
+
+            @for (int i = 0; i < dtHR.Rows.Count; i++)
+            {
+
+
+
+            <li>
+                <a  class="dropdown-toggle bg-grayLighter">@dtHR.Rows[i]["Name"].ToString()</a>
+                <ol class="dropdown-menu" data-role="dropdown">
+
+
+                    <li>
+                        <table class="table hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-grayLighter" style="width: 50%"><b>Department ID:</b></td>
+                                    <td  style="width: 50%">@dtHR.Rows[i]["DepartmentID"].ToString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </li>
+
+                    <li>
+                        <table class="table  hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-grayLighter" style="width: 50%"><b>Name:</b></td>
+                                    <td style="width: 50%">@dtHR.Rows[i]["Name"].ToString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+
+
+
+                    <li>
+                        <table class="table hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-grayLighter" style="width: 50%"><b>Group Name:</b></td>
+                                    <td style="width: 50%">@dtHR.Rows[i]["GroupName"].ToString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+
+
+                    <li>
+                        <table class="table hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-grayLighter" style="width: 50%"><b>Modification Date:</b></td>
+                                    <td style="width: 50%">@dtHR.Rows[i]["ModifiedDate"].ToString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+
+
+                    <li>
+                      
+
+                        <div class="grid">
+                            <div class="row">
+                                <div class="col-sm-6 text-center">
+                                  @Html.ActionLink("Edit", "Edit", "AddEditSelectDelete", new { id = dtHR.Rows[i]["DepartmentID"].ToString(), name = dtHR.Rows[i]["Name"].ToString(), groupName = dtHR.Rows[i]["GroupName"].ToString(), modifiedDate = dtHR.Rows[i]["ModifiedDate"].ToString() }, null)
+
+                                </div>
+                                <div class="col-sm-6 text-center">
+                                    @Html.ActionLink("Delete", "Delete", "AddEditSelectDelete", new { idtodel = dtHR.Rows[i]["DepartmentID"].ToString() }, null)
+
+
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </li>
+
+                </ol>
+            </li>
+
+
+
+            }
+
+        </ol>
+     
+
+                <table class="table  bordered hovered">
+
+                    <tbody>
+                        <tr>
+
+                            <td style="width:100%">@Html.ActionLink("Add New Record", "Add", "AddEditSelectDelete",null,null)</td>
+                            <td style="width:100%">&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+          
+
+
+        }
+        else
+        {
+        for (int j = 0; j < dtHR.Rows.Count; j++)
+        {
+        int idtoedit = Convert.ToInt32(ViewData["id"].ToString());
+
+
+
+        if (dtHR.Rows[j]["DepartmentID"].ToString() == ViewData["id"].ToString())
+        {
+
+
+        <ol class="element-menu bg-violet fg-white text-shadow">
+            <li class="bg-darkCyan fg-white " style="padding-right:15px;">
+                <a class="dropdown-toggle bg-darkCyan fg-white" href="#" style="color:red">@dtHR.Rows[j]["Name"].ToString() being edited</a>
+                <ol style="width:320px" class="bg-darkCyan fg-white ">
+                    <li style="width:100%;">
+
+                        <table class="table  bordered hovered">
+
+                            <tbody>
+                                <tr>
+                                    <td  class="bg-lightBlue fg-white text-shadow" style="width: 50%"><b>Dep. Id</b></td>
+                                    <td style="width: 50%">
+                                    
+                                    @Html.TextBox("dptid",dtHR.Rows[j]["DepartmentID"].ToString())
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                    <li style="width:100%">
+                        <table class="table  bordered hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td  class="bg-lightBlue fg-white text-shadow" style="width: 50%"><b>Name:</b></td>
+                                    <td style="width: 50%">@Html.TextBox("nme", dtHR.Rows[j]["Name"].ToString())</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                    <li style="width:100%">
+                        <table class="table  bordered hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td  class="bg-lightBlue fg-white text-shadow" style="width: 50%"><b>Group:</b></td>
+                                    <td style="width: 50%">@Html.TextBox("grnme", dtHR.Rows[j]["GroupName"].ToString())</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                    <li style="width:100%">
+                        <table class="table  bordered hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td class="bg-lightBlue fg-white text-shadow" style="width: 50%"><b>Date:</b></td>
+                                    <td style="width: 50%">@Html.TextBox("mddate", dtHR.Rows[j]["ModifiedDate"].ToString())</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                    <li style="width:100%">
+                        <div class="grid">
+                            <div class="row">
+                                <div class="col-sm-6 text-center">
+                                    <input id="Submit2" type="submit" name="btnUpdate" value="Update" class="m-btn blue fg-white" style="width:50%;height:30px;border:none">
+
+                                </div>
+                                <div class="col-sm-6 text-center">
+                                    @Html.ActionLink("Cancel", "Cancel", "AddEditSelectDelete", null, new { @class = "m-btn blue fg-white", @style = "width:50%;height:30px;" })
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                    </li>
+                </ol>
+            </li>
+        </ol>
+        @Html.Hidden("deptID", dtHR.Rows[j]["DepartmentID"].ToString())
+                        }
+                        else
+                        {
+
+        <ol class="element-menu" style="">
+            <li>
+                <a class="dropdown-toggle" href="#">@dtHR.Rows[j]["Name"].ToString()</a>
+                <ol class="dropdown-menu " data-role="dropdown">
+                    <li>
+                        <table class="table  bordered hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td style="width: 50%"><b>Department ID: </b></td>
+                                    <td style="width: 50%">@Html.Label("DepartmentID", dtHR.Rows[j]["DepartmentID"].ToString())</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+                    </li>
+                    <li>
+
+                        <table class="table  bordered hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td style="width: 50%"><b>Name: </b></td>
+                                    <td style="width: 50%">@Html.Label("Name", dtHR.Rows[j]["Name"].ToString())</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </li>
+                    <li>
+                        <table class="table  bordered hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td style="width: 50%"><b>Group Name: </b></td>
+                                    <td style="width: 50%">@Html.Label("GroupName", dtHR.Rows[j]["GroupName"].ToString())</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+                    </li>
+                    <li>
+
+                        <table class="table  bordered hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td style="width: 50%"><b>Modified Date:@Html.Hidden("EditingFormTrue") </b></td>
+                                    <td style="width: 50%">@Html.Label("ModifiedDate", dtHR.Rows[j]["ModifiedDate"].ToString())</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                    </li>
+                    <li>
+
+
+
+
+
+                        <table class="table  bordered hovered">
+
+                            <tbody>
+                                <tr class="">
+                                    <td style="width: 50%"><b>Options: </b></td>
+                                    <td style="width: 50%">
+
+                                        <input id="Submit3" type="submit" value="Edit" class="m-btn blue fg-white">
+
+                                        @Html.ActionLink("Delete", "Delete", "AddEditSelectDelete", new { idtodel = dtHR.Rows[j]["DepartmentID"].ToString() },null)
+
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+
+                    </li>
+                </ol>
+            </li>
+        </ol>
+        }
+        }
+        }
+        }
+
+        </div>
+    </nav>
+
+
+</form>
